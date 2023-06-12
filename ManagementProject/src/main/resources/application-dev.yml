@@ -6,10 +6,10 @@ logging:
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.38.130:3306/yizhi_db?autoConnect=true&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/yizhitest_db?allowPublicKeyRetrieval=true&autoConnect=true&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
     username: root
-    password: root
+    password: cfy030522
     initialSize: 1
     minIdle: 3
     maxActive: 20
@@ -37,11 +37,13 @@ spring:
     ehcache:
       config: classpath:config/ehcache.xml
   redis:
-    host: 192.168.38.130
+#    host: 192.168.38.130
+    host: 124.221.172.235
     port: 6379
-    password: html
+#    port: 8080
+    password: cfy030522
     # 连接超时时间（毫秒）
-    timeout: 10000
+    timeout: 100000000
     jedis:
       pool:
         # 连接池中的最大空闲连接

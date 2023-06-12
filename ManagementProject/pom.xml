@@ -58,9 +58,14 @@
             <artifactId>nekohtml</artifactId>
         </dependency>
         <!--mybatis -->
+<!--        <dependency>-->
+<!--            <groupId>mysql</groupId>-->
+<!--            <artifactId>mysql-connector-java</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.32</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>

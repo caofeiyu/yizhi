@@ -1,29 +1,20 @@
 package com.yizhi.student.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.yizhi.common.annotation.Log;
-import com.yizhi.common.controller.BaseController;
-import com.yizhi.common.utils.*;
-import com.yizhi.student.domain.ClassDO;
-import com.yizhi.student.service.ClassService;
-import com.yizhi.student.service.CollegeService;
-import com.yizhi.student.service.MajorService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
+import com.yizhi.common.utils.BeanHump;
+import com.yizhi.common.utils.PageUtils;
+import com.yizhi.common.utils.Query;
+import com.yizhi.common.utils.R;
 import com.yizhi.student.domain.StudentInfoDO;
 import com.yizhi.student.service.StudentInfoService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 生基础信息表
@@ -33,9 +24,6 @@ import com.yizhi.student.service.StudentInfoService;
 @RequestMapping("/student/studentInfo")
 public class StudentInfoController {
 
-	
-
-
 	@Autowired
 	private StudentInfoService studentInfoService;
     //
@@ -44,8 +32,10 @@ public class StudentInfoController {
 	@PostMapping("/save")
 	@RequiresPermissions("student:studentInfo:add")
 	public R save(StudentInfoDO studentInfoDO){
-	
-		return null;
+		if (studentInfoService.save(studentInfoDO)>0){
+			return R.ok();
+		}
+		return R.error();
 	}
 
 	/**
@@ -55,8 +45,15 @@ public class StudentInfoController {
 	@GetMapping("/list")
 	@RequiresPermissions("student:studentInfo:studentInfo")
 	public PageUtils list(@RequestParam Map<String, Object> params){
-
-		return null;
+		if (params.get("sort")!=null) {
+			params.put("sort",BeanHump.camelToUnderline(params.get("sort").toString()));
+		}
+		//查询列表数据
+		Query query = new Query(params);
+		List<StudentInfoDO> list = studentInfoService.list(query);
+		int total = studentInfoService.count(query);
+		PageUtils pageUtils = new PageUtils(list,total,query.getCurrPage(),query.getPageSize());
+		return pageUtils;
 
 	}
 
@@ -69,8 +66,8 @@ public class StudentInfoController {
 	@PostMapping("/update")
 	@RequiresPermissions("student:studentInfo:edit")
 	public R update(StudentInfoDO studentInfo){
-
-		return null;
+		int update = studentInfoService.update(studentInfo);
+		return R.ok();
 	}
 
 	/**
@@ -81,9 +78,13 @@ public class StudentInfoController {
 	@ResponseBody
 	@RequiresPermissions("student:studentInfo:remove")
 	public R remove( Integer id){
-		return null;
+		if(studentInfoService.remove(id)>0){
+			return R.ok();
+		}
+
+		return R.error();
 	}
-	
+
 	/**
 	 * 批量删除
 	 */
@@ -92,8 +93,8 @@ public class StudentInfoController {
 	@ResponseBody
 	@RequiresPermissions("student:studentInfo:batchRemove")
 	public R remove(@RequestParam("ids[]") Integer[] ids){
-
-		return null;
+		studentInfoService.batchRemove(ids);
+		return R.ok();
 	}
 
 
@@ -113,6 +114,7 @@ public class StudentInfoController {
 	@GetMapping("/edit/{id}")
 	@RequiresPermissions("student:studentInfo:edit")
 	String edit(@PathVariable("id") Integer id,Model model){
+
 		StudentInfoDO studentInfo = studentInfoService.get(id);
 		model.addAttribute("studentInfo", studentInfo);
 		return "student/studentInfo/edit";
